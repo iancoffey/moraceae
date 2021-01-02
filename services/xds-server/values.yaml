@@ -1,0 +1,5 @@
+#@data/values
+---
+svc_port: 18000
+app_port: 18000
+api_msg: HereIsxDS

@@ -1,0 +1,7 @@
+#@data/values
+---
+svc_port: 18002
+app_port: 18002
+service_name: important-service-1
+
+

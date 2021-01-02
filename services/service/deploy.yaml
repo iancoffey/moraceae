@@ -1,0 +1,38 @@
+#@ load("@ytt:data", "data")
+
+#@ def labels():
+moraceae-cluster: "service" # selector for xds snapshot builder - this should be cluster specific
+#@ end
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: grpc-service1
+spec:
+  ports:
+  - port: #@ data.values.svc_port
+    targetPort: #@ data.values.app_port
+  selector: #@ labels()
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: grpc-service1
+spec:
+  selector:
+    matchLabels: #@ labels()
+  template:
+    metadata:
+      labels: #@ labels()
+    spec:
+      containers:
+      - name: grpc-service1
+        image: ko://github.com/iancoffey/moraceae/cmd/service
+        env:
+        - name: MORACEAE_SERVICE_NAME
+          value: #@ data.values.service_name
+        - name: MORACEAE_PORT
+          value: #@ data.values.app_port

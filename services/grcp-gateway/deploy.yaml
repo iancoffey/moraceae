@@ -1,0 +1,36 @@
+#@ load("@ytt:data", "data")
+
+#@ def labels():
+moraceae-app: "grpc-gateway"
+#@ end
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: grpc-gateway
+spec:
+  ports:
+  - port: #@ data.values.svc_port
+    targetPort: #@ data.values.app_port
+  selector: #@ labels()
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: grpc-gateway
+spec:
+  selector:
+    matchLabels: #@ labels()
+  template:
+    metadata:
+      labels: #@ labels()
+    spec:
+      containers:
+      - name: grpc-gateway
+        image: ko://github.com/iancoffey/moraceae/cmd/grpc-gateway
+        env:
+        - name: API_MSG
+          value: #@ data.values.api_msg
